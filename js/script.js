@@ -40,13 +40,13 @@ const validateInput = function (input) {
     } else if (input.length > 1) {
         message.innerText = "You have entered two or more letters. Please enter only ONE letter to continue playing the game";
     } else if (!input.match(acceptedLetter)) {
-        message.innerText = "Wrong guess. Try again!"
+        message.innerText = "Wrong guess. Try again!";
     } else {
         return input;
     };
 };
 
-
+//ADD GUESSES TO GUESSEDLETTERS VARIABLE
 const makeGuess = function (anyLetter) {
     anyLetter = anyLetter.toUpperCase();
     console.log(anyLetter);
@@ -56,5 +56,43 @@ const makeGuess = function (anyLetter) {
     } else {
         guessedLetters.push(anyLetter);
         console.log(guessedLetters);
+        showGuessedLetters();
+        updateWord(guessedLetters);
+    };
+};
+
+//SHOW GUESSED LETTERS
+const showGuessedLetters = function () {
+    guessedLettersHolder.innerHTML = "";
+    for (let item of guessedLetters) {
+        let li = document.createElement("li");
+        li.innerText = item;
+        console.log(li);
+        guessedLettersHolder.append(li);
+    };
+};
+
+//UPDATE THE WORD IN PROGRESS
+const updateWord = function (guessedLetters) {
+    const wordUpper = word.toUpperCase();
+    const wordArray = wordUpper.split("");
+    const revealWord = [];
+    for (let item of wordArray) {
+        if (guessedLetters.includes(item)) {
+            console.log(item.toUpperCase());
+            revealWord.push(item.toUpperCase());
+        } else {
+            revealWord.push("●");
+        };
+    };
+    wordInProgress.innerText = revealWord.join("");
+    winOrLose();
+};
+
+//CHECK IF PLAYER HAS WON OR LOST THE GAME
+const winOrLose = function () {
+    if (wordInProgress.innerText === word.toUpperCase()) {
+        message.classList.add("win");
+        message.innerHTML = '<p class="highlight">You guessed the correct word! Congrats!</p>';
     };
 };
