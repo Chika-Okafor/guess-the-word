@@ -7,18 +7,31 @@ const guessesRemaining = document.querySelector(".remaining span"); //The span i
 const message = document.querySelector(".message"); //The empty paragraph where messages will appear when the player guesses a letter.
 const playAgain = document.querySelector(".play-again"); //The hidden button that will appear prompting the player to play again.
 
-const word = "magnolia";
+//FETCH AND ASSIGN RANDOM WORD FROM API
+const getWord = async function () {
+    const response = await fetch("https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt");
+    const wordBank = await response.text();
+    const wordList = wordBank.split("\n");
+    const randomIndex = Math.floor(Math.random() * wordList.length);
+    const randomWord = (wordList[randomIndex]).trim();
+    word = randomWord;
+    setPlaceholder(word);
+    console.log(wordList[randomIndex]);
+};
+
+getWord();
+
+
+let remainingGuesses = 8;
 guessedLetters = [];
 
 //REPLACE LETTERS WITH CIRCLES
-const play = function (word) {
+const setPlaceholder = function (word) {
     for (let alphabet of word) {
         wordInProgress.innerText += "●";
     }
     console.log(wordInProgress);
 };
-
-play(word);
 
 
 guess.addEventListener("click", function (e) {
@@ -56,6 +69,7 @@ const makeGuess = function (anyLetter) {
     } else {
         guessedLetters.push(anyLetter);
         console.log(guessedLetters);
+        updateGuessCount(anyLetter);
         showGuessedLetters();
         updateWord(guessedLetters);
     };
@@ -74,8 +88,8 @@ const showGuessedLetters = function () {
 
 //UPDATE THE WORD IN PROGRESS
 const updateWord = function (guessedLetters) {
-    const wordUpper = word.toUpperCase();
-    const wordArray = wordUpper.split("");
+    let wordUpper = word.toUpperCase();
+    let wordArray = wordUpper.split("");
     const revealWord = [];
     for (let item of wordArray) {
         if (guessedLetters.includes(item)) {
@@ -87,6 +101,25 @@ const updateWord = function (guessedLetters) {
     };
     wordInProgress.innerText = revealWord.join("");
     winOrLose();
+};
+
+//COUNT REMAINING GUESSES
+const updateGuessCount = function (newInput) {
+    let wordUpper = word.toUpperCase();
+    if (wordUpper.includes(newInput)) {
+        message.innerText = "You have guessed a correct letter!!";
+        remainingGuesses -= 1;
+    } else {
+        message.innerText = "You have made a wrong guess!!";
+        remainingGuesses -= 1;
+    };
+    if (remainingGuesses === 0) {
+        message.innerText = `GAMEOVER!!! Our secret word is ${wordUpper}!!!`;
+    } else if (remainingGuesses === 1) {
+        guessesRemaining.innerText = "1 guess";
+    } else {
+        guessesRemaining.innerText = `${remainingGuesses} guesses`;
+    };
 };
 
 //CHECK IF PLAYER HAS WON OR LOST THE GAME
