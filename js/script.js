@@ -115,6 +115,7 @@ const updateGuessCount = function (newInput) {
     };
     if (remainingGuesses === 0) {
         message.innerText = `GAMEOVER!!! Our secret word is ${wordUpper}!!!`;
+        startOver();
     } else if (remainingGuesses === 1) {
         guessesRemaining.innerText = "1 guess";
     } else {
@@ -127,5 +128,31 @@ const winOrLose = function () {
     if (wordInProgress.innerText === word.toUpperCase()) {
         message.classList.add("win");
         message.innerHTML = '<p class="highlight">You guessed the correct word! Congrats!</p>';
+        startOver();
     };
 };
+
+
+//RESTART OR REPLAY GAME
+const startOver = function () {
+    guess.classList.add("hide");
+    guessedLettersHolder.classList.add("hide");
+    remaining.classList.add("hide");
+    playAgain.classList.remove("hide");
+};
+
+
+playAgain.addEventListener("click", function () {
+    message.classList.remove("win");
+    guessedLettersHolder.innerText = "";
+    message.innerText = "";
+    remainingGuesses = 8;
+    guessedLetters = [];
+    wordInProgress.innerText = "";
+    guessesRemaining.innerText = `${remainingGuesses} guesses`;
+    guess.classList.remove("hide");
+    guessedLettersHolder.classList.remove("hide");
+    remaining.classList.remove("hide");
+    playAgain.classList.add("hide");
+    getWord();
+})
